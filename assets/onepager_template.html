@@ -140,7 +140,9 @@
 
   <footer>
     Tick things off as you go — it saves on this device.
-    <br><button class="act" id="export">export as markdown</button>
+    <br><button class="act" id="copy">copy as markdown</button>
+    <span aria-hidden="true"> · </span>
+    <button class="act" id="export">export as markdown</button>
     <span aria-hidden="true"> · </span>
     <button class="reset">reset</button>
   </footer>
@@ -311,6 +313,21 @@ document.getElementById("export").addEventListener("click", () => {
   a.download = (DATA.storeKey || "plan") + ".md";
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(a.href);
+});
+
+document.getElementById("copy").addEventListener("click", async (e) => {
+  const btn = e.currentTarget, md = buildMarkdown();
+  try {
+    await navigator.clipboard.writeText(md);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = md; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (_) {}
+    ta.remove();
+  }
+  const orig = btn.textContent; btn.textContent = "copied ✓";
+  setTimeout(() => { btn.textContent = orig; }, 1500);
 });
 </script>
 </body>
