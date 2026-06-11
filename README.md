@@ -4,6 +4,10 @@ A [Claude](https://claude.com/claude-code) skill that turns a **narrated video w
 
 You record yourself walking through your place saying *"throw this out," "move this here," "I want art on this wall."* The skill transcribes the audio, visually analyzes the frames to figure out **what you were pointing at**, and produces a plan you can actually execute — phone in hand, ticking tasks off as you go.
 
+<p align="center">
+  <img src="assets/preview.png" alt="The generated one-pager: a summary line, decisions to make first, and an effort-sorted checklist with soft verb badges." width="520">
+</p>
+
 ## What it produces
 
 - **`PLAN.md`** — the canonical plan: a summary line, the decisions to make first, an effort-sorted checklist (Tier 1 = zero purchases this weekend, Tier 2 = after one shopping run), a "leave it alone" list, and a budget-tuned shopping list.
@@ -30,6 +34,19 @@ git clone https://github.com/<you>/walkthrough-plan.git ~/.claude/skills/walkthr
 ```
 
 Then just ask: *"turn this walkthrough video into a cleanup plan — budget's $300."*
+
+## Example
+
+Point it at a 7-minute phone video of someone walking through their apartment. It comes back with:
+
+- a summary line — `25 things to do · ~$300 · 1 weekend`
+- the **decisions to make first** (where does the heirloom chair go? approve the art style?)
+- a **Tier 1** list of everything doable this weekend with bare hands, then **Tier 2** after one shopping run
+- a **"leave it alone"** list of everything you said to keep — so nothing gets touched that shouldn't
+- inline ⚠️ constraints it caught from the narration ("measure the overhang first," "not a crate")
+- a shopping list tuned to the budget, one pick each, stable links with search-term fallbacks
+
+The screenshot above is the actual rendered one-pager. Checkboxes persist on the device, so you can AirDrop it to your phone and tick things off as you walk the space.
 
 ## How it works
 
