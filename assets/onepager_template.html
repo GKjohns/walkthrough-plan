@@ -88,7 +88,8 @@
   .total b{color:var(--ink);font-weight:600}
 
   footer{margin-top:64px;text-align:center;color:var(--faint);font-size:13px}
-  .reset{margin-top:8px;background:none;border:none;color:var(--faint);text-decoration:underline;cursor:pointer;font-size:13px}
+  .reset,.act{margin-top:8px;background:none;border:none;color:var(--faint);text-decoration:underline;cursor:pointer;font-size:13px;font-family:inherit}
+  .act:hover{color:var(--soft)}
 
   @media print{
     body{background:#fff;padding:0}
@@ -139,7 +140,9 @@
 
   <footer>
     Tick things off as you go — it saves on this device.
-    <br><button class="reset">reset</button>
+    <br><button class="act" id="export">export as markdown</button>
+    <span aria-hidden="true"> · </span>
+    <button class="reset">reset</button>
   </footer>
 </div>
 
@@ -251,6 +254,63 @@ document.getElementById("total").innerHTML = DATA.total || "";
 
 document.querySelector(".reset").addEventListener("click", () => {
   if (confirm("Clear all checkmarks?")) { localStorage.removeItem(STORE); location.reload(); }
+});
+
+// --- export as markdown -------------------------------------------------
+const htmlToMd = s => (s || "")
+  .replace(/<a [^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, "[$2]($1)")
+  .replace(/<[^>]+>/g, "")
+  .replace(/&amp;/g, "&");
+const isDone = (key, r) => saved[key] === undefined ? !!r.done : saved[key];
+
+function taskLines(rows, prefix) {
+  return (rows || []).map((r, i) => {
+    const box = isDone(prefix + i, r) ? "[x]" : "[ ]";
+    const verb = r.verb ? r.verb.toUpperCase() + " — " : "";
+    let line = `- ${box} ${verb}**${r.room}** — ${r.body}`;
+    if (r.flag) line += `  ⚠ ${r.flag}`;
+    if (r.keep) line += `  _(${r.keep})_`;
+    return line;
+  }).join("\n");
+}
+
+function buildMarkdown() {
+  const out = [];
+  out.push(`# ${DATA.title}`, "");
+  if (DATA.stats && DATA.stats.length)
+    out.push(`> ${DATA.stats.map(([n, l]) => `${n} ${l}`).join(" · ")}`, "");
+  if (DATA.lede) out.push(DATA.lede, "");
+  if (DATA.decisions && DATA.decisions.length)
+    out.push("## Before you start", "", taskLines(DATA.decisions, "d_"), "");
+  if (DATA.tier1 && DATA.tier1.length)
+    out.push("## This weekend — no shopping needed", "", taskLines(DATA.tier1, "a_"), "");
+  if (DATA.tier2 && DATA.tier2.length)
+    out.push("## After one shopping run", "", taskLines(DATA.tier2, "b_"), "");
+  if (DATA.leave && DATA.leave.length) {
+    out.push("## Leave these alone", "");
+    DATA.leave.forEach(x => out.push(`- **${x.what}**${x.note ? " — " + x.note : ""}`));
+    out.push("");
+  }
+  if (DATA.shop && DATA.shop.length) {
+    out.push("## What to buy", "");
+    DATA.shop.forEach(s => {
+      let line = `- **${htmlToMd(s.name)}**${s.warn ? ` ⚠ ${s.warn}` : ""} — ${htmlToMd(s.pick)}`;
+      if (s.alt) line += `\n  - ${htmlToMd(s.alt)}`;
+      out.push(line);
+    });
+    out.push("");
+  }
+  if (DATA.total) out.push(htmlToMd(DATA.total), "");
+  return out.join("\n");
+}
+
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([buildMarkdown()], { type: "text/markdown" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (DATA.storeKey || "plan") + ".md";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
 });
 </script>
 </body>
