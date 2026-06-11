@@ -1,0 +1,10 @@
+# skill working artifacts (generated per-run, never committed)
+walkthrough_plan/
+*/frames/
+*.mp3
+*.mov
+*.mp4
+transcript.json
+
+# os / editor
+.DS_Store

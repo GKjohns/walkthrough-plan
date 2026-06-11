@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walkthrough Plan</title>
+<!--
+  walkthrough-plan one-pager template.
+  To use: replace ONLY the `DATA` object at the bottom of <script>.
+  The rendering, persistence, and styling are handled for you.
+  Calm by design — one accent color, soft badges, lots of air. Don't add chartjunk.
+-->
+<style>
+  :root{
+    --bg:#f6f5f1;
+    --ink:#262420;
+    --soft:#75716a;
+    --faint:#928d83;
+    --line:#e8e5dd;
+    --accent:#6a8a6d;
+    --warn:#9a6a3c;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font:17px/1.65 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:64px 22px 120px;
+  }
+  .wrap{max-width:600px;margin:0 auto}
+
+  header{margin-bottom:56px}
+  h1{font-size:27px;font-weight:600;letter-spacing:-.02em;margin:0 0 8px}
+  .lede{color:var(--soft);font-size:16px;margin:0}
+  .summary{display:flex;gap:40px;margin:30px 0 0;padding-top:26px;border-top:1px solid var(--line)}
+  .summary .s{display:flex;flex-direction:column}
+  .summary .n{font-size:23px;font-weight:600;letter-spacing:-.01em}
+  .summary .l{font-size:12px;color:var(--soft);letter-spacing:.04em;margin-top:2px}
+
+  section{margin-top:56px}
+  .eyebrow{font-size:12.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin:0 0 4px}
+  .when{font-size:14px;color:var(--soft);margin:0 0 22px}
+
+  ul{list-style:none;margin:0;padding:0}
+  li{display:flex;gap:15px;align-items:flex-start;padding:15px 0}
+  li + li{border-top:1px solid var(--line)}
+  input[type=checkbox]{
+    appearance:none;-webkit-appearance:none;flex:0 0 auto;width:23px;height:23px;margin-top:2px;
+    border:1.5px solid #cfcabd;border-radius:50%;background:#fff;cursor:pointer;position:relative;transition:.15s ease;
+  }
+  input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  input[type=checkbox]:checked::after{content:"";position:absolute;left:7px;top:4px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .task{flex:1;transition:.15s}
+  .task .verb{
+    display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.045em;text-transform:uppercase;
+    margin-right:9px;padding:2.5px 8px;border-radius:6px;vertical-align:1.5px;color:#6f6a60;background:#ece9e2;
+  }
+  .verb.give{color:#4f6f96;background:#e8eef6}
+  .verb.ask{color:#5a5587;background:#ebe9f5}
+  .verb.clear{color:#4e7a7a;background:#e3f0f0}
+  .verb.clean{color:#4f7a5a;background:#e6f0e8}
+  .verb.tidy{color:#5f7a4e;background:#ecf1e3}
+  .verb.putaway{color:#6d5f90;background:#ece8f4}
+  .verb.toss{color:#98584c;background:#f6e8e4}
+  .verb.place{color:#8a6b36;background:#f4ece0}
+  .task .room{font-weight:500}
+  .task .body{display:block;margin-top:2px;color:#403d37}
+  .task .keep{display:block;margin-top:4px;font-size:14.5px;color:var(--soft)}
+  .task .flag{display:block;margin-top:4px;font-size:14.5px;color:var(--warn)}
+  li.done .task{opacity:.45}
+  li.done .task .room,li.done .task .body{text-decoration:line-through;text-decoration-color:var(--faint)}
+
+  .leave-list li{display:block;padding:11px 0;color:#403d37;border-top:1px solid var(--line)}
+  .leave-list li:first-child{border-top:none}
+  .leave-list b{font-weight:500}
+  .leave-list span{color:var(--soft)}
+
+  .buy li{display:block;padding:18px 0;border-top:1px solid var(--line)}
+  .buy li:first-child{border-top:none}
+  .buy .name{font-weight:500}
+  .buy .name .warn-i{color:var(--warn);font-size:14px;font-weight:400;margin-left:8px}
+  .buy .pick{color:#403d37;margin-top:2px}
+  .buy .alt{color:var(--faint);font-size:14px;margin-top:3px}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid #c4d4c5}
+  a:active,a:hover{border-bottom-color:var(--accent)}
+  .total{margin-top:24px;color:var(--soft);font-size:15px;line-height:1.6}
+  .total b{color:var(--ink);font-weight:600}
+
+  footer{margin-top:64px;text-align:center;color:var(--faint);font-size:13px}
+  .reset{margin-top:8px;background:none;border:none;color:var(--faint);text-decoration:underline;cursor:pointer;font-size:13px}
+
+  @media print{
+    body{background:#fff;padding:0}
+    a{color:var(--ink);border:none}
+    .reset{display:none}
+    section{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title"></h1>
+    <p class="lede" id="lede"></p>
+    <div class="summary" id="summary"></div>
+  </header>
+
+  <section>
+    <p class="eyebrow">Before you start</p>
+    <p class="when" id="decisions-when">A couple of quick calls — settle these and the rest just flows.</p>
+    <ul id="decisions"></ul>
+  </section>
+
+  <section>
+    <p class="eyebrow">This weekend — no shopping needed</p>
+    <p class="when">Just your hands. Start here.</p>
+    <ul id="tier1"></ul>
+  </section>
+
+  <section>
+    <p class="eyebrow">After one shopping run</p>
+    <p class="when">Pick everything up in a single trip, then place it.</p>
+    <ul id="tier2"></ul>
+  </section>
+
+  <section>
+    <p class="eyebrow">Leave these alone</p>
+    <p class="when">Good as they are — don't touch.</p>
+    <ul class="leave-list" id="leave"></ul>
+  </section>
+
+  <section>
+    <p class="eyebrow">What to buy</p>
+    <p class="when" id="shop-when">One pick each.</p>
+    <ul class="buy" id="shop"></ul>
+    <p class="total" id="total"></p>
+  </section>
+
+  <footer>
+    Tick things off as you go — it saves on this device.
+    <br><button class="reset">reset</button>
+  </footer>
+</div>
+
+<script>
+//==================================================================
+// REPLACE THIS DATA OBJECT. Everything below it is generic rendering.
+//==================================================================
+const DATA = {
+  storeKey: "walkthrough-plan",            // unique key for localStorage on this device
+  title: "Spring cleaning",
+  lede: "Everything that needs to happen, in the order it's easiest to do it.",
+  stats: [["25","things to do"],["~$300","to spend"],["1","weekend"]],
+
+  // verb maps to a badge color: give ask clear clean tidy "put away" toss place
+  // fields: {verb?, room, body, keep?, flag?, done?}
+  decisions: [
+    {verb:"Ask", room:"The rocking chair", body:"Ask whoever might want the heirloom before moving it — that clears the clutter corner."},
+    {room:"The art", body:"Confirmed — 80s/90s lo-fi Japanese, like city-pop covers.", done:true}
+  ],
+  tier1: [
+    {verb:"Give", room:"Entry closet", body:"Set the Tupperware set aside for mom (top shelf)."},
+    {verb:"Clear", room:"Entry closet", body:"Clear the floor and nest the loose bags together.", keep:"Leave the folding dolly — that stays."},
+    {verb:"Tidy", room:"Kitchen", body:"Clear the papers off the island top.", keep:"Keep the layout — they like it."},
+    {verb:"Toss", room:"Kid's room", body:"Remove the two unused plastic drawer towers."}
+  ],
+  tier2: [
+    {verb:"Place", room:"Kitchen", body:"Two low stools that slide under the island.", flag:"Measure the overhang first — they have to tuck under."},
+    {verb:"Place", room:"Living room", body:"A closed, lidded box for the cards and games.", flag:"Not a crate — they were specific."}
+  ],
+  leave: [
+    {what:"Both couches", note:"just clear the clothes off"},
+    {what:"The kitchen island layout", note:"only the clutter on top"},
+    {what:"The ball pit, stuffed animals, windowsill plants"}
+  ],
+  shop: [
+    {name:"Two low counter stools", warn:"Measure overhang first",
+     pick:'<a href="https://www.ikea.com/">IKEA backless stool</a> — about $70 a pair',
+     alt:"upgrade: solid wood, ~$110"},
+    {name:"Closed box for the games", warn:"Not a crate",
+     pick:'<a href="https://www.ikea.com/">IKEA KVARNVIK lidded box</a> — $20'},
+    {name:"The wall art",
+     pick:"Buy a digital file, print it local — about $50 for all of it",
+     alt:'search "Hiroshi Nagai city pop print"'}
+  ],
+  total: "<b>About $300 all in.</b> Going leaner? Print the art yourself from a digital file — under $260."
+};
+//==================================================================
+// Generic rendering — no need to edit below.
+//==================================================================
+const STORE = DATA.storeKey || "walkthrough-plan";
+const saved = JSON.parse(localStorage.getItem(STORE) || "{}");
+const save = () => localStorage.setItem(STORE, JSON.stringify(saved));
+const verbClass = v => v.toLowerCase().replace(/ /g, "");
+
+document.getElementById("title").textContent = DATA.title;
+document.getElementById("lede").textContent = DATA.lede;
+const sumEl = document.getElementById("summary");
+(DATA.stats || []).forEach(([n, l]) => {
+  const d = document.createElement("div"); d.className = "s";
+  d.innerHTML = '<span class="n"></span><span class="l"></span>';
+  d.querySelector(".n").textContent = n; d.querySelector(".l").textContent = l;
+  sumEl.appendChild(d);
+});
+
+function taskHTML(r) {
+  const v = r.verb ? '<span class="verb ' + verbClass(r.verb) + '">' + r.verb + "</span>" : "";
+  let ex = "";
+  if (r.flag) ex += '<span class="flag">⚠ ' + r.flag + "</span>";
+  if (r.keep) ex += '<span class="keep">' + r.keep + "</span>";
+  return '<span class="task">' + v + '<span class="room">' + r.room + "</span>" +
+         '<span class="body">' + r.body + "</span>" + ex + "</span>";
+}
+function renderList(id, rows, prefix) {
+  const ul = document.getElementById(id);
+  (rows || []).forEach((r, i) => {
+    const key = prefix + i;
+    const li = document.createElement("li");
+    li.innerHTML = '<input type="checkbox" id="' + key + '">' + taskHTML(r);
+    ul.appendChild(li);
+    const cb = li.querySelector("input");
+    const isDone = saved[key] === undefined ? !!r.done : saved[key];
+    if (isDone) { cb.checked = true; li.classList.add("done"); }
+    cb.addEventListener("change", () => {
+      saved[key] = cb.checked; li.classList.toggle("done", cb.checked); save();
+    });
+  });
+}
+renderList("decisions", DATA.decisions, "d_");
+renderList("tier1", DATA.tier1, "a_");
+renderList("tier2", DATA.tier2, "b_");
+
+const leaveUl = document.getElementById("leave");
+(DATA.leave || []).forEach(x => {
+  const li = document.createElement("li");
+  li.innerHTML = "<b>" + x.what + "</b>" + (x.note ? ' <span>· ' + x.note + "</span>" : "");
+  leaveUl.appendChild(li);
+});
+
+const shopUl = document.getElementById("shop");
+(DATA.shop || []).forEach(s => {
+  const li = document.createElement("li");
+  const warn = s.warn ? '<span class="warn-i">⚠ ' + s.warn + "</span>" : "";
+  const alt = s.alt ? '<div class="alt">' + s.alt + "</div>" : "";
+  li.innerHTML = '<div class="name">' + s.name + warn + "</div>" +
+                 '<div class="pick">' + s.pick + "</div>" + alt;
+  shopUl.appendChild(li);
+});
+document.getElementById("total").innerHTML = DATA.total || "";
+
+document.querySelector(".reset").addEventListener("click", () => {
+  if (confirm("Clear all checkmarks?")) { localStorage.removeItem(STORE); location.reload(); }
+});
+</script>
+</body>
+</html>
